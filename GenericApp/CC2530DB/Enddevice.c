@@ -14,12 +14,12 @@
 #include "hal_key.h"
 #include "hal_uart.h"
 
-const cId_t GenericApp_ClusterList[GENERICAPP_MAX_CLUSTERS ] = 
+const cId_t GenericApp_ClusterList[GENERICAPP_MAX_CLUSTERS ] =
 {
     GENERICAPP_CLUSTERID
 };
 
-const SimpleDescriptionFormat_t GenericApp_SimpleDesc = 
+const SimpleDescriptionFormat_t GenericApp_SimpleDesc =
 {
     GENERICAPP_ENDPOINT,
     GENERICAPP_PROFID,
@@ -53,11 +53,11 @@ UINT16 GenericApp_ProcessEvent( byte task_id, UINT16 events )
 {
   afIncomingMSGPacket_t *MSGpkt;
   if ( events &SYS_EVENT_MSG )
-  {
+    {
      MSGpkt = (afIncomingMSGPacket_t *)osal_msg_receive
-       (GenericApp_TaskID);
+       ( GenericApp_TaskID);
      while ( MSGpkt )
-     {
+      {
         switch ( MSGpkt->hdr.event )
         {
         case ZDO_STATE_CHANGE:
@@ -65,32 +65,33 @@ UINT16 GenericApp_ProcessEvent( byte task_id, UINT16 events )
           status);
           if (GenericApp_NwkState ==DEV_END_DEVICE)
           {
-            GenericApp_SendTheMessage() ;
+            GenericApp_SendTheMessage();
           }
           break;
         default:
           break;
         }
-        osal_msg_deallocate( (uint8 *)MSGpkt );
+        osal_msg_deallocate( (uint8 *)MSGpkt);
         MSGpkt = (afIncomingMSGPacket_t*)osal_msg_receive(GenericApp_TaskID );
 }
         return (events ^ SYS_EVENT_MSG);
-  }
+    }
          return 0;
      }
-        void GenericApp_SendTheMessage( void )
-        {
-          unsigned char theMessageData[4] = "LED";
-          afAddrType_t my_DstAddr;
-          my_DstAddr.addrMode = (afAddrMode_t)Addr16Bit;
-          my_DstAddr.endPoint = GENERICAPP_ENDPOINT;
-          my_DstAddr.addr.shortAddr = 0x0000;
-          AF_DataRequest( &my_DstAddr,&GenericApp_epDesc,
-                         GENERICAPP_CLUSTERID,
+void GenericApp_SendTheMessage( void )
+{
+    unsigned char theMessageData[4] = "LED";
+    afAddrType_t my_DstAddr;
+    my_DstAddr.addrMode = (afAddrMode_t)Addr16Bit;
+    my_DstAddr.endPoint = GENERICAPP_ENDPOINT;
+    my_DstAddr.addr.shortAddr = 0x0000;
+    AF_DataRequest(&my_DstAddr,&GenericApp_epDesc,GENERICAPP_CLUSTERID,
                           3,
                           theMessageData,
                           &GenericApp_TransID,
-                          AF_DISCV_ROUTE, 
+                          AF_DISCV_ROUTE,
                           AF_DEFAULT_RADIUS);
-              HalLedBlink (HAL_LED_2,0,50,500);
+                          HalLedBlink(HAL_LED_2,0, 50,500);
         }
+         
+         

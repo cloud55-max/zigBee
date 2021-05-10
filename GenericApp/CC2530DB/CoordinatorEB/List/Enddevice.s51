@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 //                                                                            /
-// IAR C/C++ Compiler V8.10.3.10338/W32 for 8051        10/May/2021  16:26:26 /
+// IAR C/C++ Compiler V8.10.3.10338/W32 for 8051        10/May/2021  17:32:50 /
 // Copyright 2004-2011 IAR Systems AB.                                        /
 //                                                                            /
 //    Core               =  plain                                             /
@@ -22,7 +22,7 @@
 //                          ..\Tools\CC2530DB\f8wConfig.cfg" (-DSECURE=0      /
 //                          -DZG_SECURE_DYNAMIC=0 -DREFLECTOR                 /
 //                          -DDEFAULT_CHANLIST=0x00020000                     /
-//                          -DZDAPP_CONFIG_PAN_ID=0xFFFF                      /
+//                          -DZDAPP_CONFIG_PAN_ID=0x1007                      /
 //                          -DNWK_START_DELAY=100 -DEXTENDED_JOINING_RANDOM_M /
 //                          ASK=0x007F -DBEACON_REQUEST_DELAY=100             /
 //                          -DBEACON_REQ_DELAY_MASK=0x00FF                    /
@@ -360,7 +360,7 @@ GenericApp_SendTheMessage SYMBOL "GenericApp_SendTheMessage"
 
         RSEG XDATA_ROM_C:CONST:REORDER:NOROOT(0)
         DATA16
-//   17 const cId_t GenericApp_ClusterList[GENERICAPP_MAX_CLUSTERS ] = 
+//   17 const cId_t GenericApp_ClusterList[GENERICAPP_MAX_CLUSTERS ] =
 GenericApp_ClusterList:
         DW 1
 //   18 {
@@ -370,7 +370,7 @@ GenericApp_ClusterList:
 
         RSEG XDATA_ROM_C:CONST:REORDER:NOROOT(0)
         DATA8
-//   22 const SimpleDescriptionFormat_t GenericApp_SimpleDesc = 
+//   22 const SimpleDescriptionFormat_t GenericApp_SimpleDesc =
 GenericApp_SimpleDesc:
         DB 10
         DATA16
@@ -581,13 +581,13 @@ GenericApp_ProcessEvent:
         MOV     A,R3
         ANL     A,#0x80
         JZ      ??GenericApp_ProcessEvent_0
-//   56   {
+//   56     {
 //   57      MSGpkt = (afIncomingMSGPacket_t *)osal_msg_receive
-//   58        (GenericApp_TaskID);
+//   58        ( GenericApp_TaskID);
         ; Setup parameters for call to function osal_msg_receive
         SJMP    ??GenericApp_ProcessEvent_1
 //   59      while ( MSGpkt )
-//   60      {
+//   60       {
 //   61         switch ( MSGpkt->hdr.event )
 ??GenericApp_ProcessEvent_2:
         MOV     DPL,R6
@@ -607,7 +607,7 @@ GenericApp_ProcessEvent:
         XRL     A,#0x6
         JNZ     ??GenericApp_ProcessEvent_3
 //   67           {
-//   68             GenericApp_SendTheMessage() ;
+//   68             GenericApp_SendTheMessage();
         ; Setup parameters for call to function GenericApp_SendTheMessage
         LCALL   ??GenericApp_SendTheMessage?relay
 //   69           }
@@ -615,7 +615,7 @@ GenericApp_ProcessEvent:
 //   71         default:
 //   72           break;
 //   73         }
-//   74         osal_msg_deallocate( (uint8 *)MSGpkt );
+//   74         osal_msg_deallocate( (uint8 *)MSGpkt);
 ??GenericApp_ProcessEvent_3:
         ; Setup parameters for call to function osal_msg_deallocate
         MOV     A,R6
@@ -644,7 +644,7 @@ GenericApp_ProcessEvent:
         XRL     A,#0x80
         MOV     R3,A
         SJMP    ??GenericApp_ProcessEvent_4
-//   78   }
+//   78     }
 //   79          return 0;
 ??GenericApp_ProcessEvent_0:
         MOV     R2,#0x0
@@ -656,12 +656,12 @@ GenericApp_ProcessEvent:
 //   80      }
 
         RSEG BANKED_CODE:CODE:NOROOT(0)
-//   81         void GenericApp_SendTheMessage( void )
+//   81 void GenericApp_SendTheMessage( void )
 GenericApp_SendTheMessage:
         CFI Block cfiBlock2 Using cfiCommon0
         CFI Function GenericApp_SendTheMessage
         CODE
-//   82         {
+//   82 {
         FUNCALL GenericApp_SendTheMessage, AF_DataRequest
         LOCFRAME ISTACK, 0, STACK
         LOCFRAME PSTACK, 0, STACK
@@ -703,7 +703,7 @@ GenericApp_SendTheMessage:
         MOV     A,#-0x10
         LCALL   ?ALLOC_XSTACK8
         CFI CFA_XSP16 add(XSP16, 26)
-//   83           unsigned char theMessageData[4] = "LED";
+//   83     unsigned char theMessageData[4] = "LED";
         MOV     DPL,?XSP + 0
         MOV     DPH,?XSP + 1
         MOV     R4,DPL
@@ -712,31 +712,30 @@ GenericApp_SendTheMessage:
         MOV     DPL,#`?<Constant "LED">` & 0xff
         MOV     A,#0x4
         LCALL   ?MOVE_LONG8_XDATA_XDATA
-//   84           afAddrType_t my_DstAddr;
-//   85           my_DstAddr.addrMode = (afAddrMode_t)Addr16Bit;
+//   84     afAddrType_t my_DstAddr;
+//   85     my_DstAddr.addrMode = (afAddrMode_t)Addr16Bit;
         MOV     A,#0xc
         LCALL   ?XSTACK_DISP0_8
         MOV     A,#0x2
         MOVX    @DPTR,A
-//   86           my_DstAddr.endPoint = GENERICAPP_ENDPOINT;
+//   86     my_DstAddr.endPoint = GENERICAPP_ENDPOINT;
         MOV     A,#0xd
         LCALL   ?XSTACK_DISP0_8
         MOV     A,#0xa
         MOVX    @DPTR,A
-//   87           my_DstAddr.addr.shortAddr = 0x0000;
+//   87     my_DstAddr.addr.shortAddr = 0x0000;
         MOV     A,#0x4
         LCALL   ?XSTACK_DISP0_8
         CLR     A
         MOVX    @DPTR,A
         INC     DPTR
         MOVX    @DPTR,A
-//   88           AF_DataRequest( &my_DstAddr,&GenericApp_epDesc,
-//   89                          GENERICAPP_CLUSTERID,
-//   90                           3,
-//   91                           theMessageData,
-//   92                           &GenericApp_TransID,
-//   93                           AF_DISCV_ROUTE, 
-//   94                           AF_DEFAULT_RADIUS);
+//   88     AF_DataRequest(&my_DstAddr,&GenericApp_epDesc,GENERICAPP_CLUSTERID,
+//   89                           3,
+//   90                           theMessageData,
+//   91                           &GenericApp_TransID,
+//   92                           AF_DISCV_ROUTE,
+//   93                           AF_DEFAULT_RADIUS);
         ; Setup parameters for call to function AF_DataRequest
         MOV     ?V0 + 0,#0x1e
         MOV     R0,#?V0 + 0
@@ -774,7 +773,7 @@ GenericApp_SendTheMessage:
         MOV     A,#0x9
         LCALL   ?DEALLOC_XSTACK8
         CFI CFA_XSP16 add(XSP16, 26)
-//   95               HalLedBlink (HAL_LED_2,0,50,500);
+//   94                           HalLedBlink(HAL_LED_2,0, 50,500);
         ; Setup parameters for call to function HalLedBlink
         MOV     R4,#-0xc
         MOV     R5,#0x1
@@ -782,7 +781,7 @@ GenericApp_SendTheMessage:
         MOV     R2,#0x0
         MOV     R1,#0x2
         LCALL   ??HalLedBlink?relay
-//   96         }
+//   95         }
         MOV     A,#0x10
         LCALL   ?DEALLOC_XSTACK8
         CFI CFA_XSP16 add(XSP16, 10)
@@ -814,6 +813,8 @@ GenericApp_SendTheMessage:
         DB "LED"
 
         END
+//   96          
+//   97          
 // 
 // 297 bytes in segment BANKED_CODE
 //  18 bytes in segment BANK_RELAYS
